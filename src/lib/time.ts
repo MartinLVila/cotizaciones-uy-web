@@ -1,5 +1,7 @@
+import { NO_DATA } from './types'
+
 export function formatRelative(iso: string | null | undefined, now: number): string {
-  if (!iso) return 's/d'
+  if (!iso) return NO_DATA
 
   const dateOnly = iso.length === 10
   const date = new Date(dateOnly ? `${iso}T12:00:00` : iso)

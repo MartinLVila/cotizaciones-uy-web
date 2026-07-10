@@ -1,3 +1,5 @@
+export const NO_DATA = 's/d'
+
 export type RateType = 'official' | 'cash' | 'ebanking'
 
 export interface Rate {

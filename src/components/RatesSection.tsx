@@ -7,14 +7,15 @@ interface Failure {
 
 interface RatesSectionProps {
   rows: RateRowData[]
+  now: number
   loading: boolean
   failures: Failure[]
 }
 
-export function RatesSection({ rows, loading, failures }: RatesSectionProps) {
+export function RatesSection({ rows, now, loading, failures }: RatesSectionProps) {
   return (
     <div className="section">
-      <div className="section__title">Efectivo</div>
+      <div className="section__title mono-label">Efectivo</div>
 
       {loading && <div className="loading">Conectando...</div>}
 
@@ -23,12 +24,12 @@ export function RatesSection({ rows, loading, failures }: RatesSectionProps) {
       )}
 
       {rows.map((row) => (
-        <RateRow key={row.key} row={row} showKind />
+        <RateRow key={row.key} row={row} now={now} showKind />
       ))}
 
       {failures.length > 0 && (
         <div className="failures">
-          <div className="failures__title">Sin dato en este relevamiento</div>
+          <div className="failures__title mono-label">Sin dato en este relevamiento</div>
           {failures.map((f) => (
             <div key={f.name} className="failures__item">
               <span className="failures__name">{f.name}</span> - {f.reason}

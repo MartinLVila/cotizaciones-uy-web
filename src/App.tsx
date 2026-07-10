@@ -15,30 +15,30 @@ import { useTheme } from './hooks/useTheme'
 import { institutionName, sortCurrencies } from './lib/institutions'
 import { formatMilliunits, parseMilliunits } from './lib/money'
 import { formatRelative } from './lib/time'
-import type { Rate } from './lib/types'
-import { rateKey } from './lib/types'
+import { NO_DATA, rateKey, type Rate } from './lib/types'
 
-function buildRow(rate: Rate, now: number, flashingKeys: ReadonlySet<string>): RateRowData {
+type BaseRow = Omit<RateRowData, 'isBestBuy' | 'isBestSell'>
+
+function buildRow(rate: Rate, flashingKeys: ReadonlySet<string>): BaseRow {
+  const key = rateKey(rate)
   const buy = parseMilliunits(rate.buy)
   const sell = parseMilliunits(rate.sell)
   const spread = buy !== null && sell !== null ? sell - buy : null
 
   return {
-    key: rateKey(rate),
+    key,
     institution: rate.institution,
     name: rate.institution_name,
-    buyStr: rate.buy || 's/d',
-    sellStr: rate.sell || 's/d',
+    buyStr: rate.buy || NO_DATA,
+    sellStr: rate.sell || NO_DATA,
     buyValue: buy,
     sellValue: sell,
-    spreadStr: spread === null ? 's/d' : formatMilliunits(spread),
+    spreadStr: spread === null ? NO_DATA : formatMilliunits(spread),
     pctStr: spread !== null && buy ? `· ${((spread / buy) * 100).toFixed(1).replace('.', ',')}%` : '',
-    quotedRel: formatRelative(rate.quoted_at, now),
-    quotedFull: `cotización: ${rate.quoted_at || 's/d'} - relevado: ${rate.fetched_at || 's/d'}`,
+    quotedAt: rate.quoted_at,
+    fetchedAt: rate.fetched_at,
     sourceUrl: rate.source_url,
-    isBestBuy: false,
-    isBestSell: false,
-    flash: flashingKeys.has(rateKey(rate)),
+    flash: flashingKeys.has(key),
   }
 }
 
@@ -59,35 +59,53 @@ function App() {
     return codes.length > 0 ? codes : ['USD', 'EUR']
   }, [rates])
 
-  const view = useMemo(() => {
-    const cashRows = rates
+  // Deliberately does not depend on `now`: this rebuilds the comparison
+  // (filter, sort, best-of scan) only when the data or currency actually
+  // change, not on every 30s clock tick. Relative-time strings are
+  // formatted from `now` at render time instead (see RateRow).
+  const comparison = useMemo(() => {
+    const cashBase = rates
       .filter((r) => r.currency === currency && r.rate_type === 'cash')
-      .map((r) => buildRow(r, now, flashingKeys))
+      .map((r) => buildRow(r, flashingKeys))
       .sort((a, b) => a.name.localeCompare(b.name, 'es'))
 
-    let bestBuy: RateRowData | null = null
-    let bestSell: RateRowData | null = null
-    for (const row of cashRows) {
-      if (row.buyValue !== null && (bestBuy === null || row.buyValue > bestBuy.buyValue!)) bestBuy = row
-      if (row.sellValue !== null && (bestSell === null || row.sellValue < bestSell.sellValue!)) bestSell = row
-    }
-    for (const row of cashRows) {
-      row.isBestBuy = bestBuy?.key === row.key
-      row.isBestSell = bestSell?.key === row.key
+    let bestBuy: BaseRow | null = null
+    let bestBuyValue = -Infinity
+    let bestSell: BaseRow | null = null
+    let bestSellValue = Infinity
+    for (const row of cashBase) {
+      if (row.buyValue !== null && row.buyValue > bestBuyValue) {
+        bestBuy = row
+        bestBuyValue = row.buyValue
+      }
+      if (row.sellValue !== null && row.sellValue < bestSellValue) {
+        bestSell = row
+        bestSellValue = row.sellValue
+      }
     }
 
-    const official = rates.find((r) => r.currency === currency && r.rate_type === 'official')
-    const ebankingRows = rates
-      .filter((r) => r.currency === currency && r.rate_type === 'ebanking')
-      .map((r) => buildRow(r, now, flashingKeys))
-
-    const failures = Object.entries(data?.failures ?? {}).map(([slug, reason]) => ({
-      name: institutionName(slug),
-      reason: reason.slice(0, 80),
+    const cashRows: RateRowData[] = cashBase.map((row) => ({
+      ...row,
+      isBestBuy: row.key === bestBuy?.key,
+      isBestSell: row.key === bestSell?.key,
     }))
 
-    return { cashRows, bestBuy, bestSell, official, ebankingRows, failures }
-  }, [rates, currency, now, flashingKeys, data])
+    const official = rates.find((r) => r.currency === currency && r.rate_type === 'official')
+    const ebankingRows: RateRowData[] = rates
+      .filter((r) => r.currency === currency && r.rate_type === 'ebanking')
+      .map((r) => ({ ...buildRow(r, flashingKeys), isBestBuy: false, isBestSell: false }))
+
+    return { cashRows, bestBuy, bestSell, official, ebankingRows }
+  }, [rates, currency, flashingKeys])
+
+  const failures = useMemo(
+    () =>
+      Object.entries(data?.failures ?? {}).map(([slug, reason]) => ({
+        name: institutionName(slug),
+        reason: reason.slice(0, 80),
+      })),
+    [data],
+  )
 
   return (
     <main className="shell">
@@ -103,23 +121,27 @@ function App() {
 
       <CurrencyTabs currencies={currencies} active={currency} onSelect={setCurrency} />
 
-      {view.cashRows.length > 0 && (
+      {comparison.cashRows.length > 0 && (
         <BestOfPanel
-          bestForSelling={view.bestBuy && { name: view.bestBuy.name, value: view.bestBuy.buyStr }}
-          bestForBuying={view.bestSell && { name: view.bestSell.name, value: view.bestSell.sellStr }}
+          bestForSelling={comparison.bestBuy && { name: comparison.bestBuy.name, value: comparison.bestBuy.buyStr }}
+          bestForBuying={comparison.bestSell && { name: comparison.bestSell.name, value: comparison.bestSell.sellStr }}
         />
       )}
 
-      {view.official && (
+      {comparison.official && (
         <OfficialReference
-          value={view.official.buy === view.official.sell ? view.official.buy : `${view.official.buy} / ${view.official.sell}`}
-          when={formatRelative(view.official.quoted_at, now)}
+          value={
+            comparison.official.buy === comparison.official.sell
+              ? comparison.official.buy
+              : `${comparison.official.buy} / ${comparison.official.sell}`
+          }
+          when={formatRelative(comparison.official.quoted_at, now)}
         />
       )}
 
-      <RatesSection rows={view.cashRows} loading={loading && !data} failures={view.failures} />
+      <RatesSection rows={comparison.cashRows} now={now} loading={loading && !data} failures={failures} />
 
-      <EbankingSection rows={view.ebankingRows} />
+      <EbankingSection rows={comparison.ebankingRows} now={now} />
 
       <Footer />
     </main>

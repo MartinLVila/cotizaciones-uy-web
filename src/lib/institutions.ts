@@ -1,33 +1,28 @@
 // Presentation-only metadata, not part of the payload. Matches the slugs in
 // https://github.com/MartinLVila/cotizaciones-uy/blob/main/data/v1/institutions.json
-const KIND: Record<string, string> = {
-  bcu: 'referencia',
-  itau: 'banco',
-  brou: 'banco',
-  bbva: 'banco',
-  varlix: 'casa de cambio',
-  gales: 'casa de cambio',
-  matriz: 'casa de cambio',
+interface InstitutionMeta {
+  name: string
+  kind: string
+}
+
+const INSTITUTIONS: Record<string, InstitutionMeta> = {
+  bcu: { name: 'Banco Central del Uruguay', kind: 'referencia' },
+  itau: { name: 'Itau Uruguay', kind: 'banco' },
+  brou: { name: 'Banco de la Republica Oriental del Uruguay', kind: 'banco' },
+  bbva: { name: 'BBVA Uruguay', kind: 'banco' },
+  varlix: { name: 'Varlix', kind: 'casa de cambio' },
+  gales: { name: 'Gales', kind: 'casa de cambio' },
+  matriz: { name: 'Cambio Matriz', kind: 'casa de cambio' },
 }
 
 export function institutionKind(slug: string): string {
-  return KIND[slug] ?? 'casa de cambio'
+  return INSTITUTIONS[slug]?.kind ?? 'casa de cambio'
 }
 
 // Used only for the `failures` list, where we have a slug but no `Rate`
 // (and therefore no `institution_name`) to read a display name from.
-const NAME: Record<string, string> = {
-  bcu: 'Banco Central del Uruguay',
-  itau: 'Itau Uruguay',
-  brou: 'Banco de la Republica Oriental del Uruguay',
-  bbva: 'BBVA Uruguay',
-  varlix: 'Varlix',
-  gales: 'Gales',
-  matriz: 'Cambio Matriz',
-}
-
 export function institutionName(slug: string): string {
-  return NAME[slug] ?? slug
+  return INSTITUTIONS[slug]?.name ?? slug
 }
 
 const CURRENCY_PRIORITY: Record<string, number> = { USD: 0, EUR: 1 }

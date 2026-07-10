@@ -5,6 +5,20 @@
   min-height: 100vh;
 }
 
+/* Shared by every small uppercase mono label (size/color/letter-spacing
+   vary per context and stay on the specific class). */
+.mono-label {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+/* Shared by every mono tabular-figure value (size/weight/color/spacing
+   vary per context and stay on the specific class). */
+.mono-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
 /* Header */
 
 .header {
@@ -30,11 +44,9 @@
 }
 
 .header__sub {
-  font-family: var(--font-mono);
   font-size: 10px;
   color: var(--faint);
   letter-spacing: 0.14em;
-  text-transform: uppercase;
   margin-top: 8px;
 }
 
@@ -203,11 +215,9 @@
 }
 
 .best-card__label {
-  font-family: var(--font-mono);
   font-size: 9.5px;
   letter-spacing: 0.12em;
   color: var(--faint);
-  text-transform: uppercase;
 }
 
 .best-card__row {
@@ -224,11 +234,9 @@
 }
 
 .best-card__value {
-  font-family: var(--font-mono);
   font-size: 22px;
   font-weight: 600;
   color: var(--accent);
-  font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
 }
 
@@ -258,10 +266,8 @@
 }
 
 .official-bar__value {
-  font-family: var(--font-mono);
   font-size: 16px;
   font-weight: 500;
-  font-variant-numeric: tabular-nums;
 }
 
 .official-bar__when {
@@ -281,11 +287,9 @@
 }
 
 .section__title {
-  font-family: var(--font-mono);
   font-size: 10.5px;
   letter-spacing: 0.14em;
   color: var(--dim2);
-  text-transform: uppercase;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--ink);
 }
@@ -365,18 +369,14 @@
 }
 
 .rate-cell__label {
-  font-family: var(--font-mono);
   font-size: 9px;
   letter-spacing: 0.1em;
   color: var(--faint);
-  text-transform: uppercase;
 }
 
 .rate-cell__value {
-  font-family: var(--font-mono);
   font-size: 19px;
   font-weight: 600;
-  font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
   margin-top: 3px;
 }
@@ -386,11 +386,9 @@
 }
 
 .rate-cell__spread {
-  font-family: var(--font-mono);
   font-size: 19px;
   font-weight: 400;
   color: var(--dim2);
-  font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
   margin-top: 3px;
 }
@@ -409,11 +407,9 @@
 }
 
 .failures__title {
-  font-family: var(--font-mono);
   font-size: 9px;
   letter-spacing: 0.12em;
   color: var(--dim2);
-  text-transform: uppercase;
 }
 
 .failures__item {
