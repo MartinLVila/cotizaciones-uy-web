@@ -1,0 +1,78 @@
+:root {
+  --bg: #0a0c0b;
+  --panel: #101410;
+  --line: #20261f;
+  --line2: #171c16;
+  --ink: #e9eee7;
+  --dim2: #8a9286;
+  --faint: #565e56;
+  --good: #54d08a;
+  --accent: #2fa866;
+
+  --font-sans: 'Space Grotesk', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+}
+
+:root[data-theme='light'] {
+  --bg: #f1f1e9;
+  --panel: #f9f8f2;
+  --line: #d5d4c8;
+  --line2: #e2e1d6;
+  --ink: #171a15;
+  --dim2: #5e655a;
+  --faint: #9aa093;
+  --good: #1e7a45;
+  --accent: color-mix(in oklab, #2fa866 78%, black);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.15;
+  }
+}
+
+@keyframes flash-row {
+  0% {
+    background: color-mix(in oklab, var(--accent) 22%, transparent);
+  }
+  100% {
+    background: transparent;
+  }
+}

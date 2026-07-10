@@ -1,0 +1,35 @@
+{
+  "name": "cotizaciones-uy-web",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Frontend for cotizaciones-uy, an open dataset of currency exchange rates in Uruguay.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MartinLVila/cotizaciones-uy-web.git"
+  },
+  "homepage": "https://github.com/MartinLVila/cotizaciones-uy-web",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "oxlint": "^1.71.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.1.1"
+  }
+}
