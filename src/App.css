@@ -44,9 +44,9 @@
 }
 
 .header__sub {
-  font-size: 10px;
-  color: var(--faint);
-  letter-spacing: 0.14em;
+  font-size: 10.5px;
+  color: var(--dim2);
+  letter-spacing: 0.12em;
   margin-top: 8px;
 }
 
@@ -215,9 +215,9 @@
 }
 
 .best-card__label {
-  font-size: 9.5px;
-  letter-spacing: 0.12em;
-  color: var(--faint);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--dim2);
 }
 
 .best-card__row {
@@ -287,9 +287,10 @@
 }
 
 .section__title {
-  font-size: 10.5px;
-  letter-spacing: 0.14em;
-  color: var(--dim2);
+  font-size: 11.5px;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+  font-weight: 500;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--ink);
 }
@@ -347,16 +348,16 @@
 
 .rate-row__kind {
   font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.08em;
+  font-size: 10px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--faint);
 }
 
 .rate-row__when {
   font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--faint);
+  font-size: 11px;
+  color: var(--dim2);
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -369,9 +370,9 @@
 }
 
 .rate-cell__label {
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  color: var(--faint);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  color: var(--dim2);
 }
 
 .rate-cell__value {
@@ -387,8 +388,8 @@
 
 .rate-cell__spread {
   font-size: 19px;
-  font-weight: 400;
-  color: var(--dim2);
+  font-weight: 500;
+  color: var(--dim);
   letter-spacing: -0.02em;
   margin-top: 3px;
 }
@@ -430,8 +431,8 @@
   padding-top: 18px;
   border-top: 1px solid var(--line);
   font-family: var(--font-mono);
-  font-size: 10.5px;
-  color: var(--faint);
+  font-size: 11.5px;
+  color: var(--dim2);
   line-height: 1.9;
 }
 
